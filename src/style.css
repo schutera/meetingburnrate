@@ -1,0 +1,210 @@
+:root {
+  --bg: #0f172a;
+  --card: #0b1220;
+  --accent: #df3abb;
+  --accent-2: #ff3d81;
+  --text: #cfeef8;
+}
+
+html,body {height:100%; margin:0; font-family: 'VT323', monospace, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;}
+body {
+  background:
+    radial-gradient(1200px 400px at 10% 10%, rgba(255,0,128,0.06), transparent 10%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 6px),
+    linear-gradient(180deg,#041022 0%, #071130 60%);
+  color:var(--text); display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+/* Background video */
+#bg-video {
+  position:fixed;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:-2;
+  filter:contrast(1.02) saturate(1.05) brightness(0.75);
+}
+
+/* Ensure overlays/content stack above video */
+body::after{
+  content:""; position:fixed; left:0; right:0; top:0; bottom:0; pointer-events:none;
+  background-image: linear-gradient(rgba(0,0,0,0.04) 50%, rgba(255,255,255,0.02) 51%);
+  background-size:100% 6px; mix-blend-mode:overlay; opacity:0.6; z-index:0;
+}
+h1 {margin:0 0 8px; font-size:28px; font-family: 'Press Start 2P', monospace; color:var(--accent); letter-spacing:2px;}
+main {display:flex; flex-direction:column; align-items:center; text-align:center; padding:64px 36px; width:min(1100px,92%); max-width:1200px; position:relative; z-index:2; border-radius:20px; background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08)); border:3px solid rgba(255,255,255,0.18); box-shadow:0 20px 50px rgba(2,6,23,0.72); backdrop-filter:blur(14px) saturate(140%) brightness(1.04); -webkit-backdrop-filter:blur(14px) saturate(140%) brightness(1.04); overflow:visible; margin-top:32px}
+main::before{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0)); mix-blend-mode:overlay}
+
+/* Full-screen backdrop that grayscales everything behind the card while leaving the card itself colored */
+.backdrop-grayscale{
+  position:fixed;
+  inset:0;
+  z-index:1; /* sits above the video/background (video is -2) and below the card (card is z-index:2) */
+  pointer-events:none;
+  backdrop-filter: grayscale(100%) contrast(0.9) brightness(0.9);
+  -webkit-backdrop-filter: grayscale(100%) contrast(0.9) brightness(0.9);
+  /* Add a subtle dark overlay to deepen the background video */
+  background-color: rgba(0,0,0,0.09);
+}
+h1 {margin:0 0 12px; font-size:40px; font-family: 'Press Start 2P', monospace; color:var(--accent); letter-spacing:2px;}
+h1 {margin:0 0 8px; font-size:28px; font-family: 'Press Start 2P', monospace; color:var(--accent); letter-spacing:2px;}
+/* Neon/glow retro heading */
+h1 {
+  text-shadow:
+    0 0 8px rgba(0,255,213,0.12),
+    0 0 20px rgba(0,255,213,0.08),
+    0 2px 0 rgba(0,0,0,0.6);
+}
+p {margin:12px 0 20px; opacity:0.95; font-size:20px;}
+/* Retro link/button */
+a#learn {
+  display:inline-block; padding:10px 18px; color:#071130; background:linear-gradient(90deg,var(--accent), var(--accent-2));
+  text-decoration:none; font-weight:700; border-radius:6px; box-shadow:0 6px 18px rgba(2,6,23,0.6), 0 0 12px rgba(0,255,213,0.06) inset;
+  font-family: 'Press Start 2P', monospace; letter-spacing:1px;
+}
+
+/* Scanline overlay */
+body::after{
+  content:""; position:fixed; left:0; right:0; top:0; bottom:0; pointer-events:none;
+  background-image: linear-gradient(rgba(0,0,0,0.04) 50%, rgba(255,255,255,0.02) 51%);
+  background-size:100% 6px; mix-blend-mode:overlay; opacity:0.6;
+}
+
+/* Subtle flicker animation */
+@keyframes flicker {
+  0% {opacity:1}
+  50% {opacity:0.96}
+  100% {opacity:1}
+}
+main {animation:flicker 3s infinite ease-in-out}
+
+/* Controls and display */
+.controls {display:flex; gap:14px; align-items:flex-start; justify-content:center; flex-direction:column; margin-top:18px; width:100%; max-width:720px}
+.controls label {display:flex; flex-direction:column; color:var(--text); font-size:15px; width:100%; align-items:center}
+.control-row {display:flex; gap:12px; align-items:center; justify-content:center}
+input[type="range"]{flex:1; accent-color:var(--accent); height:28px}
+input[type="number"], input[type="text"], input[type="number"] {background:rgba(255,255,255,0.03); border:3px solid rgba(255,255,255,0.06); color:var(--text); padding:12px 14px; border-radius:8px; font-size:16px}
+/* Remove default number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+/* Set a fixed width for the participants field and center text */
+.participant-control input[type="number"] { width:84px; text-align:center; font-size:28px }
+.buttons {display:flex; gap:12px; align-items:center}
+button {background:linear-gradient(90deg,var(--accent),var(--accent-2)); border:0; color:#071130; padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:15px}
+button.ghost {background:transparent; color:var(--text); border:3px solid rgba(255,255,255,0.06)}
+
+.display {display:flex; gap:12px; justify-content:center; margin-top:28px; flex-direction:column; align-items:center; width:100%; max-width:720px}
+.stat {min-width:180px; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px}
+.stat .label {font-size:14px; opacity:0.95; color:#ffffff; text-align:center; order:2}
+.stat div:last-child {font-family:'Press Start 2P', monospace; font-size:20px; margin:0; color:#ffffff; text-shadow:0 0 8px rgba(0,255,213,0.12); order:1}
+
+/* Top total styling */
+.total-top {display:flex; align-items:center;  width:100%; justify-content:center}
+.total-top .emoji {font-size:60px; display:inline-block}
+.total-top .total-wrap {text-align:center}
+.total-top .total-wrap .label {font-size:14px; opacity:0.9}
+.total-top #total {font-family:'Press Start 2P', monospace; font-size:80px; color:var(--accent); text-shadow:0 0 18px rgba(0,255,213,0.14)}
+
+/* enlarge emojis used outside of buttons */
+.emoji {font-size:28px; margin-right:8px; display:inline-block; vertical-align:middle}
+
+/* Large decorative emoji above header */
+.header-emoji {font-size:172px; line-height:1; margin-bottom:8px; color:var(--accent); text-shadow:0 4px 18px rgba(0,0,0,0.45);}
+
+@media (max-width:900px){
+  .header-emoji {font-size:48px}
+}
+
+/* Participant +/- control styling */
+.participant-control button {background:transparent; border:3px solid rgba(255,255,255,0.06); color:var(--text); padding:8px 10px; border-radius:8px; font-size:28px; cursor:pointer}
+.participant-control input[type="number"] {text-align:center}
+
+/* Action buttons group (bottom) */
+.actions {display:flex; gap:12px; margin-top:28px}
+.actions button {padding:14px 20px; font-size:16px}
+
+/* Slightly larger stat label + emoji sizing */
+.stat .label {font-size:15px}
+
+/* Small screens tweak */
+@media (max-width:900px){
+  h1 {font-size:32px}
+  p {font-size:16px}
+}
+
+@media (max-width:900px){
+  .controls {flex-direction:column; align-items:stretch}
+  .display {flex-direction:column; align-items:center}
+  .stat div:last-child {font-size:18px}
+}
+
+/* Additional mobile-friendly tweaks */
+@media (max-width:900px){
+  /* Keep the fullscreen grayscale backdrop on small screens (slightly reduced) */
+  .backdrop-grayscale { display: block !important; backdrop-filter: grayscale(92%) contrast(0.92) brightness(0.88); -webkit-backdrop-filter: grayscale(92%) contrast(0.92) brightness(0.88); }
+
+  /* Reduce main padding and radius for small viewports */
+  main { padding: 20px 12px; border-radius: 12px; width: 100%; margin-top:16px }
+
+  /* Increase tap targets */
+  button { padding: 12px 14px; font-size: 16px; }
+  .actions button { font-size: 15px; }
+
+  /* Make number inputs easier to tap and allow natural width handling */
+  input[type="number"], input[type="text"] { font-size: 16px; padding: 8px 10px; }
+  .participant-control input[type="number"] { width: 72px; min-width: 56px; font-size:16px }
+
+  /* Reduce oversized decorative pieces */
+  .header-emoji { font-size: 40px; margin-bottom: 6px; }
+  .total-top #total { font-size: 40px; }
+  h1 { font-size: 18px; }
+  p { font-size: 14px; }
+
+  /* Prevent horizontal overflow */
+  html, body { overflow-x: hidden; }
+
+  /* Center the app and make it fill the viewport so the card sits centered */
+  html, body, #app, #app > div { height: 100vh; max-height: 100vh; }
+  #app { display: flex; align-items: center; justify-content: center; }
+  #app > div { display:flex; align-items:center; justify-content:center; width:100%; height:100%; padding: 0px 0px; }
+
+  /* Hide decorative/peripheral elements to focus on the card */
+  #app > div > .header-emoji, #app > div > .page-header, #app > div > footer { display: none !important; }
+
+  /* Make the main card fill the viewport on mobile */
+  main { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; padding: 100px; width: 100%; max-width: none; height: 100%; margin: 0; border-radius: 0; box-shadow: none; }
+
+  /* Reduce spacer gaps to avoid overflow */
+  .controls { gap: 8px; }
+  .display { margin-top: 10px; }
+  .actions { margin-top: 10px; max-width: 100%; }
+
+  /* Ensure background video remains visible (runtime JS may still remove sources on slow/save-data) */
+  body > #bg-video { display: block !important; }
+}
+
+/* Force portrait-style mobile layout even in landscape orientation */
+@media (max-width:900px) and (orientation: landscape), (max-height:420px) {
+  /* Keep the same mobile card layout used for portrait phones */
+  html, body, #app, #app > div { height: 100vh; max-height: 100vh; overflow: hidden; }
+  #app { display:flex; align-items:center; justify-content:center; }
+  #app > div { display:flex; align-items:center; justify-content:center; width:100%; height:100%; padding:0; }
+
+  /* Use the exact mobile main card sizing to avoid reflow on rotate */
+  main { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; padding: 100px; width: 100%; max-width: none; height: 100%; margin: 0; border-radius: 0; box-shadow: none; overflow: hidden; }
+
+  /* Hide decorative elements same as portrait mobile */
+  #app > div > .header-emoji, #app > div > .page-header, #app > div > footer { display: none !important; }
+
+  /* Keep totals and controls sized as in portrait mobile */
+  .total-top #total { font-size: 40px; }
+  .participant-control input[type="number"] { width: 72px; min-width: 56px; font-size:16px }
+  .controls { gap: 8px; }
+  .actions { margin-top: 10px; max-width: 100%; flex-direction: column; gap:8px }
+}
+

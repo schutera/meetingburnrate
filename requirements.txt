@@ -1,0 +1,4 @@
+# This project is primarily Node-based (Vite). No Python requirements by default.
+# Add Python package specifiers below if you need a Python environment.
+# Example:
+# python-dotenv==1.0.0
