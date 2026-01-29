@@ -66,7 +66,7 @@ app.innerHTML = `
         <main style="width: 100%; max-width: 600px;">
           <div class="total-top">
             <div class="total-wrap">
-              <div id="total">0,00 €</div>
+              <div id="total" style="max-width: 340px; margin: 0 auto; padding: 0 2px; text-align: center; font-size: clamp(1.5rem, 4vw, 2.5rem);">0,00 €</div>
             </div>
           </div>
 
@@ -82,7 +82,7 @@ app.innerHTML = `
                 <div class="emoji" style="text-align:center; margin-bottom: 8px; font-size:2em;">🤑</div>
                 <div class="control-row participant-control" style="justify-content: center;">
                     <button id="participants-decrease" aria-label="decrease">🧯</button>
-                    <input id="participants-number" type="number" min="1" max="200" value="3">
+                    <input id="participants-number" type="number" min="1" max="200" value="3" style="font-size: clamp(1rem, 2vw, 1.3rem); min-width: 80px; height: 1.5em;">
                     <button id="participants-increase" aria-label="increase">🔥</button>
                 </div>
                 <div class="control-label" style="text-align:center; margin-top:0.25em;">Participants</div>
@@ -92,7 +92,7 @@ app.innerHTML = `
                 <div class="emoji" style="text-align:center; margin-bottom: 8px; font-size:2em;">💵</div>
                 <div class="control-row participant-control" style="justify-content: center;">
                   <button id="salary-decrease" aria-label="decrease-salary">🧯</button>
-                  <input id="salary" type="number" min="1000" step="5000" value="90000">
+                  <input id="salary" type="number" min="1000" step="5000" value="90000" style="font-size: clamp(1rem, 2vw, 1.3rem); min-width: 80px; height: 1.5em;">
                   <button id="salary-increase" aria-label="increase-salary">🔥</button>
                 </div>
                 <div class="control-label" style="text-align:center; margin-top:0.25em;">Average annual salary</div>
@@ -303,7 +303,7 @@ startBtn.addEventListener('click', () => {
     startBtn.onclick = null;
     startBtn.addEventListener('click', () => {
       sendDiscordWebhook('⛽ Did we just get some fuel?');
-      window.location.href = 'https://www.stripe.com';
+      window.location.href = 'https://buy.stripe.com/dRm5kvgVEgIKc1S1D9a3u00';
     }, { once: true });
     updateDisplay();
   }
