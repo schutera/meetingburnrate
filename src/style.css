@@ -172,6 +172,13 @@ button.ghost {background:transparent; color:var(--text); border:3px solid rgba(2
   }
 }
 
+/* On large laptop/desktop widths, apply a mild zoom to better fit content (emulates 80% page zoom) */
+@media (min-width: 1200px) {
+  html { zoom: 0.8; }
+  /* Ensure transformed layout stays centered */
+  body { transform-origin: top center; }
+}
+
 /* When viewport is short, hide header first so the card remains visible */
 @media (max-height: 700px) {
   html, body, #app { align-items: flex-start; }

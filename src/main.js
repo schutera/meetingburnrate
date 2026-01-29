@@ -43,8 +43,18 @@ function showBgVideo() {
   }
   // try to start playback (user gesture should allow this when called from click)
   try {
+    // quick fetch check in production to make sure asset is reachable
+    try {
+      fetch('/material/humanatmshift.mp4', { method: 'HEAD', cache: 'no-cache' }).then(resp => {
+        console.info('[video] HEAD fetch status=', resp.status);
+        if (!resp.ok) {
+          console.error('[video] video asset not reachable (HEAD returned ' + resp.status + ')');
+        }
+      }).catch(err => { console.warn('[video] HEAD fetch failed', err); });
+    } catch (e) { console.warn('[video] HEAD fetch exception', e); }
+
     const p = video.play();
-    if (p && p.then) p.then(() => { video.style.opacity = '1'; }).catch(()=>{ video.style.opacity = '1'; });
+    if (p && p.then) p.then(() => { video.style.opacity = '1'; }).catch(err=>{ video.style.opacity = '1'; console.warn('[video] play() rejected', err); });
     else video.style.opacity = '1';
   } catch(e) {
     video.style.opacity = '1';
@@ -552,10 +562,15 @@ function applyVideoPolicy() {
   if (!video) return;
   // Always hide video on load, will be shown only when running
   video.style.display = 'none';
+  // Diagnostic logs for production issues
+  try {
+    console.info('[video] applyVideoPolicy running');
+  } catch (e) {}
   const nav = navigator;
   const conn = nav.connection || nav.mozConnection || nav.webkitConnection;
   const saveData = conn && conn.saveData;
   const effectiveType = conn && conn.effectiveType ? conn.effectiveType : '';
+  try { console.info('[video] connection saveData=', saveData, 'effectiveType=', effectiveType); } catch(e){}
   const slowNetwork = /2g/.test(effectiveType);
   // Vite environment override (VITE_SHOW_BG_VIDEO) — if explicitly set to 'true' or 'false'
   let envOverride = false;
