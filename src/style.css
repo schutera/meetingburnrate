@@ -1,3 +1,4 @@
+#bg-video { display: none; }
 :root {
   --bg: #0f172a;
   --card: #0b1220;
@@ -12,7 +13,7 @@ body {
     radial-gradient(1200px 400px at 10% 10%, rgba(255,0,128,0.06), transparent 10%),
     repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 6px),
     linear-gradient(180deg,#041022 0%, #071130 60%);
-  color:var(--text); display:flex; align-items:center; justify-content:center; overflow:hidden;
+  color:var(--text); display:flex; align-items:center; justify-content:center; overflow:auto;
 }
 /* Background video */
 #bg-video {
@@ -137,6 +138,49 @@ button.ghost {background:transparent; color:var(--text); border:3px solid rgba(2
   p {font-size:16px}
 }
 
+/* Landscape (height < width): position participants and salary side-by-side */
+@media (min-aspect-ratio: 1/1) and (min-width: 480px) {
+  .controls {
+    flex-direction: row !important;
+    gap: 2rem !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    width: 100%;
+    max-width: none;
+  }
+  .controls > .control-group {
+    flex: 1 1 0;
+    min-width: 260px;
+    max-width: none;
+    align-items: stretch;
+  }
+  .controls > .control-group .control-row { justify-content: center; }
+  .controls > .control-group .control-label { text-align: left; margin-top: 0.5em; }
+
+  /* Put action buttons side-by-side in landscape/laptop */
+  .actions {
+    flex-direction: row !important;
+    gap: 1.25rem !important;
+    justify-content: center !important;
+    width: 100%;
+    max-width: none;
+  }
+  .actions button {
+    width: auto !important;
+    min-width: 140px;
+    flex: 0 1 auto;
+  }
+}
+
+/* When viewport is short, hide header first so the card remains visible */
+@media (max-height: 700px) {
+  html, body, #app { align-items: flex-start; }
+  .header-emoji, .page-header { display: none !important; }
+  main { padding: 20px 16px !important; width: calc(100% - 32px) !important; max-width: none !important; margin-top: 12px !important; max-height: calc(100vh - 24px); }
+  /* allow the page to scroll if content still overflows */
+  html, body { overflow: auto; }
+}
+
 @media (max-width:900px){
   .controls {flex-direction:column; align-items:stretch}
   .display {flex-direction:column; align-items:center}
@@ -185,7 +229,7 @@ button.ghost {background:transparent; color:var(--text); border:3px solid rgba(2
   .actions { margin-top: 10px; max-width: 100%; }
 
   /* Ensure background video remains visible (runtime JS may still remove sources on slow/save-data) */
-  body > #bg-video { display: block !important; }
+  /* mobile forcing of video removed so JS controls visibility */
 }
 
 /* Force portrait-style mobile layout even in landscape orientation */

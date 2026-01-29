@@ -1,3 +1,49 @@
+// Always hide video on load, even before any other logic
+window.addEventListener('DOMContentLoaded', function() {
+  var v = document.getElementById('bg-video');
+  if (v) v.style.display = 'none';
+});
+// Utility to show/hide the background video
+function showBgVideo() {
+  let video = document.getElementById('bg-video');
+  if (!video) {
+    // create video element and insert before backdrop if present
+    video = document.createElement('video');
+    video.id = 'bg-video';
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.setAttribute('preload', 'auto');
+    video.style.position = 'fixed';
+    video.style.left = '0';
+    video.style.top = '0';
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.objectFit = 'cover';
+    video.style.zIndex = '-2';
+    video.style.display = 'block';
+    video.style.pointerEvents = 'none';
+    const src = document.createElement('source');
+    src.src = '/material/humanatmshift.mp4';
+    src.type = 'video/mp4';
+    video.appendChild(src);
+    const backdrop = document.querySelector('.backdrop-grayscale');
+    if (backdrop && backdrop.parentNode) backdrop.parentNode.insertBefore(video, backdrop);
+    else document.body.insertBefore(video, document.body.firstChild);
+  } else {
+    video.style.display = 'block';
+  }
+  // try to start playback (user gesture should allow this when called from click)
+  try { video.play().catch(()=>{}); } catch(e) {}
+}
+function hideBgVideo() {
+  const video = document.getElementById('bg-video');
+  if (video) {
+    try { video.pause(); } catch(e) {}
+    // remove element to free resources
+    try { video.parentNode && video.parentNode.removeChild(video); } catch(e) {}
+  }
+}
 // Send a message to Discord webhook
 async function sendDiscordWebhook(message) {
   const url = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
@@ -52,6 +98,102 @@ function preventMobileZoomAndMove() {
 }
 
 window.addEventListener('DOMContentLoaded', preventMobileZoomAndMove);
+
+// Orientation lock overlay for mobile: show overlay when in landscape
+function createOrientationOverlay() {
+  if (document.getElementById('orientation-lock')) return;
+  const ol = document.createElement('div');
+  ol.id = 'orientation-lock';
+  ol.style.position = 'fixed';
+  ol.style.inset = '0';
+  ol.style.background = 'rgba(3,6,12,0.95)';
+  ol.style.zIndex = '9999';
+  ol.style.display = 'none';
+  ol.style.alignItems = 'center';
+  ol.style.justifyContent = 'center';
+  ol.style.color = '#fff';
+  ol.style.textAlign = 'center';
+  ol.style.padding = '20px';
+  ol.innerHTML = '<div style="max-width:420px"><h2 style="margin:0 0 8px;font-size:20px">Please rotate your device</h2><p style="margin:0;opacity:0.9">This app works best in portrait. Rotate your phone back to continue.</p></div>';
+  document.body.appendChild(ol);
+}
+
+function showOrientationOverlay() {
+  createOrientationOverlay();
+  const ol = document.getElementById('orientation-lock');
+  if (!ol) return;
+  ol.style.display = 'flex';
+  // prevent underlying scroll/interaction
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+}
+
+function hideOrientationOverlay() {
+  const ol = document.getElementById('orientation-lock');
+  if (!ol) return;
+  ol.style.display = 'none';
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+}
+
+function updateOrientationLock() {
+  // Consider mobile when pointer is coarse or width <= 900
+  const isMobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 900;
+  if (!isMobile) { hideOrientationOverlay(); return; }
+  // If orientation lock was successful, don't show overlay
+  if (window.__orientationLocked) { hideOrientationOverlay(); return; }
+  if (window.innerWidth > window.innerHeight) {
+    showOrientationOverlay();
+  } else {
+    hideOrientationOverlay();
+  }
+}
+
+window.addEventListener('resize', updateOrientationLock, { passive: true });
+window.addEventListener('orientationchange', updateOrientationLock);
+document.addEventListener('DOMContentLoaded', updateOrientationLock);
+
+// Try to lock orientation to portrait where supported. Must be called from a user gesture
+function tryLockOrientation() {
+  try {
+    const scr = window.screen || window.screen.orientation || null;
+    if (scr && scr.lock) {
+      scr.lock('portrait').then(() => {
+        window.__orientationLocked = true;
+        hideOrientationOverlay();
+      }).catch(() => {
+        window.__orientationLocked = false;
+        updateOrientationLock();
+      });
+    } else if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('portrait').then(() => {
+        window.__orientationLocked = true;
+        hideOrientationOverlay();
+      }).catch(() => {
+        window.__orientationLocked = false;
+        updateOrientationLock();
+      });
+    } else {
+      window.__orientationLocked = false;
+      updateOrientationLock();
+    }
+  } catch (e) {
+    window.__orientationLocked = false;
+    updateOrientationLock();
+  }
+}
+
+// Attempt lock on first user interaction (some browsers require a gesture)
+function oneTimeLockOnGesture() {
+  function handler() {
+    tryLockOrientation();
+    document.removeEventListener('touchstart', handler);
+    document.removeEventListener('click', handler);
+  }
+  document.addEventListener('touchstart', handler, { once: true });
+  document.addEventListener('click', handler, { once: true });
+}
+oneTimeLockOnGesture();
 
 const app = document.getElementById('app');
 
@@ -276,6 +418,7 @@ startBtn.addEventListener('click', () => {
     rafId = requestAnimationFrame(step);
     updateDisplay();
     sendDiscordWebhook('Someone is burning money in a meeting! 💸🔥');
+    showBgVideo();
   } else {
     // end meeting, then turn button into Support
     running = false;
@@ -306,10 +449,12 @@ startBtn.addEventListener('click', () => {
       window.location.href = 'https://buy.stripe.com/dRm5kvgVEgIKc1S1D9a3u00';
     }, { once: true });
     updateDisplay();
+    hideBgVideo();
   }
 });
 
 resetBtn.addEventListener('click', () => {
+  hideBgVideo();
   window.location.href = window.location.pathname;
 });
 
@@ -391,6 +536,8 @@ if (shareBtn) {
 function applyVideoPolicy() {
   const video = document.getElementById('bg-video');
   if (!video) return;
+  // Always hide video on load, will be shown only when running
+  video.style.display = 'none';
   const nav = navigator;
   const conn = nav.connection || nav.mozConnection || nav.webkitConnection;
   const saveData = conn && conn.saveData;
