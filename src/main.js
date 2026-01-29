@@ -12,7 +12,10 @@ function showBgVideo() {
     video.id = 'bg-video';
     video.muted = true;
     video.loop = true;
+    video.autoplay = true;
     video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('muted', '');
     video.setAttribute('preload', 'auto');
     video.style.position = 'fixed';
     video.style.left = '0';
@@ -23,18 +26,29 @@ function showBgVideo() {
     video.style.zIndex = '-2';
     video.style.display = 'block';
     video.style.pointerEvents = 'none';
+    video.style.opacity = '0';
+    video.style.transition = 'opacity 400ms ease-in';
     const src = document.createElement('source');
     src.src = '/material/humanatmshift.mp4';
     src.type = 'video/mp4';
     video.appendChild(src);
+    // ensure browser parses source
+    try { video.load(); } catch (e) {}
     const backdrop = document.querySelector('.backdrop-grayscale');
     if (backdrop && backdrop.parentNode) backdrop.parentNode.insertBefore(video, backdrop);
     else document.body.insertBefore(video, document.body.firstChild);
   } else {
     video.style.display = 'block';
+    try { video.load(); } catch(e) {}
   }
   // try to start playback (user gesture should allow this when called from click)
-  try { video.play().catch(()=>{}); } catch(e) {}
+  try {
+    const p = video.play();
+    if (p && p.then) p.then(() => { video.style.opacity = '1'; }).catch(()=>{ video.style.opacity = '1'; });
+    else video.style.opacity = '1';
+  } catch(e) {
+    video.style.opacity = '1';
+  }
 }
 function hideBgVideo() {
   const video = document.getElementById('bg-video');
