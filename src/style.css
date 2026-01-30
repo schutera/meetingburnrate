@@ -1,261 +1,770 @@
-#bg-video { display: none; }
+/* CSS Variables */
 :root {
-  --bg: #0f172a;
-  --card: #0b1220;
+  --bg-primary: #0a0f1a;
+  --bg-secondary: #0d1424;
+  --bg-card: rgba(15, 23, 42, 0.6);
   --accent: #df3abb;
-  --accent-2: #ff3d81;
-  --text: #cfeef8;
+  --accent-hover: #ff3d81;
+  --accent-glow: rgba(223, 58, 187, 0.4);
+  --support-color: #10b981;
+  --support-glow: rgba(16, 185, 129, 0.4);
+  --text-primary: #f0f6fc;
+  --text-secondary: #8b949e;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --border-radius: 16px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --font-display: 'Press Start 2P', monospace;
+  --font-body: 'VT323', monospace, system-ui, sans-serif;
 }
 
-html,body {height:100%; margin:0; font-family: 'VT323', monospace, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;}
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background:
-    radial-gradient(1200px 400px at 10% 10%, rgba(255,0,128,0.06), transparent 10%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 6px),
-    linear-gradient(180deg,#041022 0%, #071130 60%);
-  color:var(--text); display:flex; align-items:center; justify-content:center; overflow:auto;
-}
-/* Background video */
-#bg-video {
-  position:fixed;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:-2;
-  filter:contrast(1.02) saturate(1.05) brightness(0.75);
-}
-
-/* Ensure overlays/content stack above video */
-body::after{
-  content:""; position:fixed; left:0; right:0; top:0; bottom:0; pointer-events:none;
-  background-image: linear-gradient(rgba(0,0,0,0.04) 50%, rgba(255,255,255,0.02) 51%);
-  background-size:100% 6px; mix-blend-mode:overlay; opacity:0.6; z-index:0;
-}
-h1 {margin:0 0 8px; font-size:28px; font-family: 'Press Start 2P', monospace; color:var(--accent); letter-spacing:2px;}
-main {display:flex; flex-direction:column; align-items:center; text-align:center; padding:64px 36px; width:min(1100px,92%); max-width:1200px; position:relative; z-index:2; border-radius:20px; background:linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08)); border:3px solid rgba(255,255,255,0.18); box-shadow:0 20px 50px rgba(2,6,23,0.72); backdrop-filter:blur(14px) saturate(140%) brightness(1.04); -webkit-backdrop-filter:blur(14px) saturate(140%) brightness(1.04); overflow:visible; margin-top:32px}
-main::before{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0)); mix-blend-mode:overlay}
-
-/* Full-screen backdrop that grayscales everything behind the card while leaving the card itself colored */
-.backdrop-grayscale{
-  position:fixed;
-  inset:0;
-  z-index:1; /* sits above the video/background (video is -2) and below the card (card is z-index:2) */
-  pointer-events:none;
-  backdrop-filter: grayscale(100%) contrast(0.9) brightness(0.9);
-  -webkit-backdrop-filter: grayscale(100%) contrast(0.9) brightness(0.9);
-  /* Add a subtle dark overlay to deepen the background video */
-  background-color: rgba(0,0,0,0.09);
-}
-h1 {margin:0 0 12px; font-size:40px; font-family: 'Press Start 2P', monospace; color:var(--accent); letter-spacing:2px;}
-h1 {margin:0 0 8px; font-size:28px; font-family: 'Press Start 2P', monospace; color:var(--accent); letter-spacing:2px;}
-/* Neon/glow retro heading */
-h1 {
-  text-shadow:
-    0 0 8px rgba(0,255,213,0.12),
-    0 0 20px rgba(0,255,213,0.08),
-    0 2px 0 rgba(0,0,0,0.6);
-}
-p {margin:12px 0 20px; opacity:0.95; font-size:20px;}
-/* Retro link/button */
-a#learn {
-  display:inline-block; padding:10px 18px; color:#071130; background:linear-gradient(90deg,var(--accent), var(--accent-2));
-  text-decoration:none; font-weight:700; border-radius:6px; box-shadow:0 6px 18px rgba(2,6,23,0.6), 0 0 12px rgba(0,255,213,0.06) inset;
-  font-family: 'Press Start 2P', monospace; letter-spacing:1px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
 }
 
 /* Scanline overlay */
-body::after{
-  content:""; position:fixed; left:0; right:0; top:0; bottom:0; pointer-events:none;
-  background-image: linear-gradient(rgba(0,0,0,0.04) 50%, rgba(255,255,255,0.02) 51%);
-  background-size:100% 6px; mix-blend-mode:overlay; opacity:0.6;
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.03) 50%, rgba(255, 255, 255, 0.01) 51%);
+  background-size: 100% 4px;
+  opacity: 0.4;
+  z-index: 100;
 }
 
-/* Subtle flicker animation */
-@keyframes flicker {
-  0% {opacity:1}
-  50% {opacity:0.96}
-  100% {opacity:1}
+/* Background video */
+#bg-video {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  filter: contrast(1.02) saturate(1.05) brightness(0.7);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease-in;
 }
-main {animation:flicker 3s infinite ease-in-out}
 
-/* Controls and display */
-.controls {display:flex; gap:14px; align-items:flex-start; justify-content:center; flex-direction:column; margin-top:18px; width:100%; max-width:720px}
-.controls label {display:flex; flex-direction:column; color:var(--text); font-size:15px; width:100%; align-items:center}
-.control-row {display:flex; gap:12px; align-items:center; justify-content:center}
-input[type="range"]{flex:1; accent-color:var(--accent); height:28px}
-input[type="number"], input[type="text"], input[type="number"] {background:rgba(255,255,255,0.03); border:3px solid rgba(255,255,255,0.06); color:var(--text); padding:12px 14px; border-radius:8px; font-size:16px}
-/* Remove default number input spinners */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+/* Grayscale backdrop when video is playing */
+.backdrop-grayscale {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  backdrop-filter: grayscale(100%) contrast(0.9) brightness(0.85);
+  -webkit-backdrop-filter: grayscale(100%) contrast(0.9) brightness(0.85);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* App Container */
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Layout */
+.app-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 1rem;
+}
+
+/* Header - compact */
+.page-header {
+  text-align: center;
+  padding: 0.75rem;
+  flex-shrink: 0;
+}
+
+.header-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 3vw, 1.1rem);
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.page-header .tagline {
+  display: none;
+}
+
+/* Main Card */
+.main-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== HERO TOTAL DISPLAY ===== */
+.total-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 0;
+}
+
+.total-display {
+  width: 100%;
+}
+
+.total-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.total-value {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 11vw, 6rem);
+  color: var(--accent);
+  text-shadow: 0 0 40px var(--accent-glow), 0 0 80px var(--accent-glow);
+  white-space: nowrap;
+  line-height: 1.1;
+  transition: text-shadow 0.3s ease;
+}
+
+/* Pulsing effect when running */
+.app-layout.is-running .total-value {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { text-shadow: 0 0 40px var(--accent-glow), 0 0 80px var(--accent-glow); }
+  50% { text-shadow: 0 0 60px var(--accent-glow), 0 0 120px var(--accent-glow), 0 0 160px var(--accent-glow); }
+}
+
+/* Rate Display - below total */
+.rate-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
+
+.rate-display .rate-value {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* ===== CONTROLS SECTION ===== */
+.controls-section {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 480px) {
+  .controls-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.control-group .control-icon {
+  font-size: 1.5rem;
+}
+
+.control-group .control-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Number Input */
+.number-input {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  text-align: center;
+  padding: 0.4rem;
+  width: 80px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.number-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(223, 58, 187, 0.2);
+}
+
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
-/* Set a fixed width for the participants field and center text */
-.participant-control input[type="number"] { width:84px; text-align:center; font-size:28px }
-.buttons {display:flex; gap:12px; align-items:center}
-button {background:linear-gradient(90deg,var(--accent),var(--accent-2)); border:0; color:#071130; padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:15px}
-button.ghost {background:transparent; color:var(--text); border:3px solid rgba(255,255,255,0.06)}
-
-.display {display:flex; gap:12px; justify-content:center; margin-top:28px; flex-direction:column; align-items:center; width:100%; max-width:720px}
-.stat {min-width:180px; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px}
-.stat .label {font-size:14px; opacity:0.95; color:#ffffff; text-align:center; order:2}
-.stat div:last-child {font-family:'Press Start 2P', monospace; font-size:20px; margin:0; color:#ffffff; text-shadow:0 0 8px rgba(0,255,213,0.12); order:1}
-
-/* Top total styling */
-.total-top {display:flex; align-items:center;  width:100%; justify-content:center}
-.total-top .emoji {font-size:60px; display:inline-block}
-.total-top .total-wrap {text-align:center}
-.total-top .total-wrap .label {font-size:14px; opacity:0.9}
-.total-top #total {font-family:'Press Start 2P', monospace; font-size:80px; color:var(--accent); text-shadow:0 0 18px rgba(0,255,213,0.14)}
-
-/* enlarge emojis used outside of buttons */
-.emoji {font-size:28px; margin-right:8px; display:inline-block; vertical-align:middle}
-
-/* Large decorative emoji above header */
-.header-emoji {font-size:172px; line-height:1; margin-bottom:8px; color:var(--accent); text-shadow:0 4px 18px rgba(0,0,0,0.45);}
-
-@media (max-width:900px){
-  .header-emoji {font-size:48px}
+.number-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-/* Participant +/- control styling */
-.participant-control button {background:transparent; border:3px solid rgba(255,255,255,0.06); color:var(--text); padding:8px 10px; border-radius:8px; font-size:28px; cursor:pointer}
-.participant-control input[type="number"] {text-align:center}
-
-/* Action buttons group (bottom) */
-.actions {display:flex; gap:12px; margin-top:28px}
-.actions button {padding:14px 20px; font-size:16px}
-
-/* Slightly larger stat label + emoji sizing */
-.stat .label {font-size:15px}
-
-/* Small screens tweak */
-@media (max-width:900px){
-  h1 {font-size:32px}
-  p {font-size:16px}
+/* Control Buttons */
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-/* Landscape (height < width): position participants and salary side-by-side */
-@media (min-aspect-ratio: 1/1) and (min-width: 480px) {
-  .controls {
-    flex-direction: row !important;
-    gap: 2rem !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    width: 100%;
-    max-width: none;
-  }
-  .controls > .control-group {
-    flex: 1 1 0;
-    min-width: 260px;
-    max-width: none;
-    align-items: stretch;
-  }
-  .controls > .control-group .control-row { justify-content: center; }
-  .controls > .control-group .control-label { text-align: left; margin-top: 0.5em; }
+.control-btn:hover {
+  border-color: var(--accent);
+  background: rgba(223, 58, 187, 0.1);
+}
 
-  /* Put action buttons side-by-side in landscape/laptop */
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.actions .btn-primary {
+  grid-column: 1 / -1;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: #000;
+  box-shadow: 0 4px 20px var(--accent-glow);
+  font-size: 1.4rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px var(--accent-glow);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  font-size: 1.1rem;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* ===== SUPPORT BUTTON - HIGH CONVERSION ===== */
+.btn-support {
+  background: linear-gradient(135deg, var(--support-color), #059669);
+  color: #000;
+  box-shadow: 0 4px 20px var(--support-glow);
+  animation: support-pulse 2s ease-in-out infinite;
+  font-size: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.btn-support:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 40px var(--support-glow);
+}
+
+@keyframes support-pulse {
+  0%, 100% { box-shadow: 0 4px 20px var(--support-glow); }
+  50% { box-shadow: 0 4px 40px var(--support-glow), 0 0 60px var(--support-glow); }
+}
+
+/* Support message */
+.support-message {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+}
+
+.support-message p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+}
+
+.support-message .highlight {
+  color: var(--support-color);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+}
+
+/* Footer */
+.page-footer {
+  text-align: center;
+  padding: 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.page-footer a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.page-footer a:hover {
+  color: var(--text-primary);
+}
+
+/* ===== RUNNING STATE - FOCUS MODE ===== */
+.app-layout.is-running .page-header,
+.app-layout.is-running .controls-grid {
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+
+.app-layout.is-running .total-value {
+  font-size: clamp(2rem, 12vw, 7rem);
+}
+
+/* ===== ENDED STATE ===== */
+.app-layout.is-ended .total-label {
+  font-size: 1.2rem;
+}
+
+.app-layout.is-ended .total-value {
+  color: var(--support-color);
+  text-shadow: 0 0 40px var(--support-glow), 0 0 80px var(--support-glow);
+}
+
+/* Mobile ended state - hide controls to maximize space */
+@media (max-width: 599px) {
+  .app-layout.is-ended .controls-grid,
+  .app-layout.is-ended .rate-display {
+    display: none;
+  }
+
+  /* Stack all buttons vertically with support button prominent */
+  .app-layout.is-ended .actions {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .app-layout.is-ended .actions .btn-primary {
+    order: -1;
+  }
+
+  .app-layout.is-ended .actions .btn-secondary {
+    padding: 0.875rem 1rem;
+  }
+}
+
+/* ===== TABLET (600px+) ===== */
+@media (min-width: 600px) {
+  .page-header {
+    padding: 1rem;
+  }
+
+  .header-emoji {
+    font-size: 3rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .page-header .tagline {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+  }
+
+  .main-card {
+    padding: 2rem;
+  }
+
+  .total-value {
+    font-size: clamp(3rem, 12vw, 5rem);
+  }
+
+  .controls-grid {
+    gap: 1.5rem;
+  }
+
+  .control-group {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+  }
+
+  .control-group .control-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .number-input {
+    width: 100px;
+    font-size: 1.5rem;
+  }
+
+  .control-btn {
+    width: 44px;
+    height: 44px;
+  }
+
   .actions {
-    flex-direction: row !important;
-    gap: 1.25rem !important;
-    justify-content: center !important;
-    width: 100%;
-    max-width: none;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
   }
-  .actions button {
-    width: auto !important;
-    min-width: 140px;
-    flex: 0 1 auto;
+
+  .actions .btn-primary {
+    grid-column: auto;
   }
 }
 
-/* On large laptop/desktop widths, apply a mild zoom to better fit content (emulates 80% page zoom) */
+/* ===== DESKTOP (900px+) ===== */
+@media (min-width: 900px) {
+  .app-layout {
+    padding: 1.5rem 2rem;
+  }
+
+  .page-header {
+    padding: 1.5rem;
+  }
+
+  .header-emoji {
+    font-size: 3.5rem;
+  }
+
+  .main-card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 2.5rem;
+    gap: 2rem;
+  }
+
+  .total-section {
+    flex: 1 1 100%;
+    min-height: 200px;
+  }
+
+  .total-value {
+    font-size: clamp(4rem, 10vw, 6rem);
+  }
+
+  .app-layout.is-running .total-value {
+    font-size: clamp(5rem, 12vw, 8rem);
+  }
+
+  .rate-display {
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .rate-display .rate-value {
+    font-size: 1.25rem;
+  }
+
+  .controls-section {
+    flex: 1 1 100%;
+    padding-top: 0;
+  }
+
+  .controls-grid {
+    margin-bottom: 2rem;
+  }
+
+  .control-group {
+    padding: 1.25rem 2rem;
+  }
+
+  .control-group .control-label {
+    font-size: 0.9rem;
+  }
+
+  .number-input {
+    width: 120px;
+    font-size: 1.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .control-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 1.25rem;
+  }
+
+  .btn-primary {
+    font-size: 1.6rem;
+    padding: 1.5rem 2rem;
+  }
+
+  .btn-secondary {
+    font-size: 1.25rem;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .btn-support {
+    font-size: 1.75rem;
+    padding: 1.75rem 2.5rem;
+  }
+}
+
+/* ===== LARGE DESKTOP (1200px+) ===== */
 @media (min-width: 1200px) {
-  html { zoom: 0.8; }
-  /* Ensure transformed layout stays centered */
-  body { transform-origin: top center; }
+  .app-layout {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .main-card {
+    max-width: 1100px;
+    padding: 3rem;
+  }
+
+  .total-section {
+    min-height: 250px;
+  }
+
+  .total-value {
+    font-size: 6rem;
+  }
+
+  .app-layout.is-running .total-value {
+    font-size: 8rem;
+  }
 }
 
-/* When viewport is short, hide header first so the card remains visible */
-@media (max-height: 700px) {
-  html, body, #app { align-items: flex-start; }
-  .header-emoji, .page-header { display: none !important; }
-  main { padding: 20px 16px !important; width: calc(100% - 32px) !important; max-width: none !important; margin-top: 12px !important; max-height: calc(100vh - 24px); }
-  /* allow the page to scroll if content still overflows */
-  html, body { overflow: auto; }
+/* ===== SHORT VIEWPORT ===== */
+@media (max-height: 600px) {
+  .page-header {
+    padding: 0.5rem;
+  }
+
+  .header-emoji {
+    font-size: 1.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 0.7rem;
+  }
+
+  .main-card {
+    padding: 1rem;
+  }
+
+  .total-section {
+    min-height: 0;
+    flex: 0 1 auto;
+    padding: 1rem 0;
+  }
+
+  .total-value {
+    font-size: 2.5rem;
+  }
+
+  .rate-display {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .controls-section {
+    padding-top: 0.5rem;
+  }
+
+  .controls-grid {
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .control-group {
+    padding: 0.5rem;
+  }
+
+  .control-group .control-icon {
+    font-size: 1.25rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    padding: 1rem;
+    font-size: 1.2rem;
+  }
 }
 
-@media (max-width:900px){
-  .controls {flex-direction:column; align-items:stretch}
-  .display {flex-direction:column; align-items:center}
-  .stat div:last-child {font-size:18px}
+/* ===== MOBILE LANDSCAPE ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .page-header {
+    display: none;
+  }
+
+  .app-layout {
+    padding: 0.5rem 1rem;
+  }
+
+  .main-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .total-section {
+    flex: 1;
+    padding: 0;
+  }
+
+  .controls-section {
+    flex: 1;
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actions .btn-primary {
+    grid-column: 1 / -1;
+  }
 }
 
-/* Additional mobile-friendly tweaks */
-@media (max-width:900px){
-  /* Keep the fullscreen grayscale backdrop on small screens (slightly reduced) */
-  .backdrop-grayscale { display: block !important; backdrop-filter: grayscale(92%) contrast(0.92) brightness(0.88); -webkit-backdrop-filter: grayscale(92%) contrast(0.92) brightness(0.88); }
-
-  /* Reduce main padding and radius for small viewports */
-  main { padding: 20px 12px; border-radius: 12px; width: 100%; margin-top:16px }
-
-  /* Increase tap targets */
-  button { padding: 12px 14px; font-size: 16px; }
-  .actions button { font-size: 15px; }
-
-  /* Make number inputs easier to tap and allow natural width handling */
-  input[type="number"], input[type="text"] { font-size: 16px; padding: 8px 10px; }
-  .participant-control input[type="number"] { width: 72px; min-width: 56px; font-size:16px }
-
-  /* Reduce oversized decorative pieces */
-  .header-emoji { font-size: 40px; margin-bottom: 6px; }
-  .total-top #total { font-size: 40px; }
-  h1 { font-size: 18px; }
-  p { font-size: 14px; }
-
-  /* Prevent horizontal overflow */
-  html, body { overflow-x: hidden; }
-
-  /* Center the app and make it fill the viewport so the card sits centered */
-  html, body, #app, #app > div { height: 100vh; max-height: 100vh; }
-  #app { display: flex; align-items: center; justify-content: center; }
-  #app > div { display:flex; align-items:center; justify-content:center; width:100%; height:100%; padding: 0px 0px; }
-
-  /* Hide decorative/peripheral elements to focus on the card */
-  #app > div > .header-emoji, #app > div > .page-header, #app > div > footer { display: none !important; }
-
-  /* Make the main card fill the viewport on mobile */
-  main { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; padding: 100px; width: 100%; max-width: none; height: 100%; margin: 0; border-radius: 0; box-shadow: none; }
-
-  /* Reduce spacer gaps to avoid overflow */
-  .controls { gap: 8px; }
-  .display { margin-top: 10px; }
-  .actions { margin-top: 10px; max-width: 100%; }
-
-  /* Ensure background video remains visible (runtime JS may still remove sources on slow/save-data) */
-  /* mobile forcing of video removed so JS controls visibility */
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  animation: toast-in 0.3s ease-out;
 }
 
-/* Force portrait-style mobile layout even in landscape orientation */
-@media (max-width:900px) and (orientation: landscape), (max-height:420px) {
-  /* Keep the same mobile card layout used for portrait phones */
-  html, body, #app, #app > div { height: 100vh; max-height: 100vh; overflow: hidden; }
-  #app { display:flex; align-items:center; justify-content:center; }
-  #app > div { display:flex; align-items:center; justify-content:center; width:100%; height:100%; padding:0; }
-
-  /* Use the exact mobile main card sizing to avoid reflow on rotate */
-  main { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; padding: 100px; width: 100%; max-width: none; height: 100%; margin: 0; border-radius: 0; box-shadow: none; overflow: hidden; }
-
-  /* Hide decorative elements same as portrait mobile */
-  #app > div > .header-emoji, #app > div > .page-header, #app > div > footer { display: none !important; }
-
-  /* Keep totals and controls sized as in portrait mobile */
-  .total-top #total { font-size: 40px; }
-  .participant-control input[type="number"] { width: 72px; min-width: 56px; font-size:16px }
-  .controls { gap: 8px; }
-  .actions { margin-top: 10px; max-width: 100%; flex-direction: column; gap:8px }
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
-
